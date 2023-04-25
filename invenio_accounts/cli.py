@@ -150,3 +150,18 @@ def users_deactivate(user):
         click.secho('User "%s" has been deactivated.' % user, fg="green")
     else:
         click.secho('User "%s" was already deactivated.' % user, fg="yellow")
+
+@users.command("delete")
+@click.argument("user")
+@with_appcontext
+@commit
+def users_delete(user):
+    """Delete a user."""
+    user_obj = _datastore.get_user(user)
+    if user_obj is None:
+        raise click.UsageError("ERROR: User not found.")
+    try:
+        _datastore.delete_user(user_obj)
+        click.secho('User "%s" has been deleted.' % user, fg="green")
+    except Exceprion as e:
+        raise click.UsageError("ERROR: Exception when deleting user: " + e)
